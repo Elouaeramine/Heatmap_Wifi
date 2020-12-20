@@ -1,0 +1,7 @@
+public class Hote {
+    int x,y ;
+    static int id=0 ;
+    int num ;
+    public Hote(int x, int y)
+    { this.x=x ; this.y=y; num=id ; id++;}
+}

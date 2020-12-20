@@ -1,0 +1,61 @@
+import java.awt.*;
+import java.awt.event.*;
+import java.awt.geom.*;
+import java.util.*;
+
+class AccessPoint {
+	int x , y; // Coordonnees du point d'acces
+	int Rc=50; // rayon de couverture sans obstacle est de 50 mètres
+	int num ; // numéro du point d'accès
+	AccessPoint( int x, int y, int n)
+	{ this.x=x; this.y=y; num=n;}
+}
+public class CouvertureCellules extends Frame {
+	/**
+		 *
+		 */
+	private static final long serialVersionUID = 1L;
+	ArrayList<AccessPoint> APs = new ArrayList<AccessPoint>();
+	CouvertureCellules (){ init_accessPoints(); } // Constructeur
+
+	/* Générer aléatoirement des point d'accès */
+
+	void init_accessPoints(){ 
+		Random r = new Random();
+		for (int i=0;i<15; i++)
+		{
+			int x= r.nextInt(400);
+			int y = r.nextInt(400);
+			APs.add( new AccessPoint (x,y,i));
+		}
+	}
+	/* Affichage Des Points d'Acces */
+
+	void Affichage_AccessPoints(Graphics2D ga){ 
+		Random rn = new Random();
+		for (int i=0; i<APs.size(); i++){
+			float x , y, r;
+			x=APs.get(i).x; y=APs.get(i).y; r=APs.get(i).Rc;
+			Shape circle = new Ellipse2D.Float(x-r, y-r, 2*r, 2*r);
+			ga.draw(circle);
+			Color C= new Color(128, rn.nextInt(200), rn.nextInt(200),
+			rn.nextInt(200)); // le premier paramètre eest la transparence des
+			//couleurs, les autres c'est le RGB (Red, Green, Blue)
+			ga.setPaint(C);
+			ga.fill(circle);
+		}
+	}
+	@Override
+	public void paint(Graphics g) {
+		Graphics2D ga = (Graphics2D)g;
+		Affichage_AccessPoints(ga);
+	}
+	public static void main(String args[]) {
+		Frame frame = new CouvertureCellules ();
+		frame.addWindowListener(new WindowAdapter(){
+			public void windowClosing(WindowEvent we){ System.exit(0);}
+		});
+		frame.setSize(500, 500);
+		frame.setVisible(true);
+	}
+}

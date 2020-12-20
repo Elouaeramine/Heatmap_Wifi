@@ -1,0 +1,77 @@
+import java.awt.*;
+import java.awt.event.*;
+import java.awt.geom.*;
+import java.util.*;
+// class AccessPoint {
+// int x , y;
+// int Rc=100; // rayon de couverture sans obstacle est de 100 mètres
+// int num ; // numéro du point d'accès
+// AccessPoint( int x, int y, int n)
+// { this.x=x; this.y=y; num=n;}
+// }
+
+public class DessinCellulesAttenuation extends Frame {
+    /**
+     *
+     */
+    private static final long serialVersionUID = 1L;
+    ArrayList<AccessPoint> APs = new ArrayList<AccessPoint>();
+    DessinCellulesAttenuation (){init_accessPoints(); }
+    void init_accessPoints() { // généré aléatoirement des point d'accès
+        Random r = new Random();
+        for (int i=0;i<5; i++)
+        { int x= r.nextInt(400);
+        int y = r.nextInt(400);
+        APs.add( new AccessPoint (x,y,i));
+        }
+    }
+    void Affichage_AccessPoints(Graphics2D ga){ // affichage des points d'accès
+        // Random rn = new Random();
+        for (int i=0; i<APs.size(); i++)
+        { int xc , yc, r;
+        xc=APs.get(i).x; yc=APs.get(i).y; r=APs.get(i).Rc;
+        celluleDegrader (ga, xc, yc, r);
+        }
+    }
+    void celluleDegrader (Graphics2D ga, int xc, int yc, int r){
+        // Random rn = new Random();
+        for (int i=0; i<2*r; i+=1)
+        for (int j=0; j<2*r;j+=1)
+        { int x=(xc-r)+ i;
+        int y= (yc-r)+ j;
+        double f=Facteur_Attinuation (xc, yc ,r, x, y);
+        int G=(int) (255.0-f*255.0);
+
+        if (f!=0){
+
+        Color C= new Color(G ,10,10);
+        Shape square = new Rectangle2D.Double(x, y,1, 1);
+        ga.setPaint(C);
+        ga.fill(square);}
+        }
+
+    }
+    int SiNull (double f)
+    { if (f==0) return (0); else return(1); }
+    double distance (int x1,int y1, int x, int y)
+    { return Math.sqrt( (x1-x)*(x1-x)+(y1-y)*(y1-y)); }
+    double Facteur_Attinuation (int xc, int yc ,int r, int x, int y)
+    // facteur d'attinuation du signal, si égal à 1 puissance maximale, si 0
+    //pas de signal
+    { // estimation à corriger selon la formule d’attinuation !!!
+    double f= 1.0-distance(xc,yc,x,y)/((double) r);
+    if (f<0) return(0);
+    return(f);
+    }
+    public void paint(Graphics g) {
+    Graphics2D ga = (Graphics2D)g;
+    Affichage_AccessPoints(ga);
+    }
+    public static void main(String args[]) {
+    Frame frame = new DessinCellulesAttenuation ();
+    frame.addWindowListener(new WindowAdapter(){
+    public void windowClosing(WindowEvent we){ System.exit(0);}
+    });
+    frame.setSize(500, 500); frame.setVisible(true);
+    }
+}
